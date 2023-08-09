@@ -28,6 +28,6 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs"
-  ],
+, "src/server/api/seedData.mts"  ],
   "exclude": ["node_modules"]
 }

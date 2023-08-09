@@ -6,11 +6,7 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+    provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
@@ -48,13 +44,15 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String      @id @default(cuid())
     name          String?
-    email         String?   @unique
+    password      String?
+    email         String?     @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
+    DishLikes     DishLikes[]
 }
 
 model VerificationToken {
@@ -63,4 +61,58 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model DishLikes {
+    id         Int      @id @default(autoincrement())
+    dish_id    Int
+    user_id    String
+    created_at DateTime @default(now()) @db.Timestamp(6)
+    dishes     Dishes   @relation(fields: [dish_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    users      User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model Dishes {
+    id          Int          @id @default(autoincrement())
+    name        String       @db.VarChar(255)
+    cuisine     String       @db.VarChar(255)
+    slug        String       @db.VarChar(255)
+    url         String       @db.VarChar(255)
+    ingredients Ingredient[]
+    recipes     Recipe?
+    likes       Int          @default(0)
+    DishLikes   DishLikes[]
+}
+
+model Comments {
+    id         Int       @id @default(autoincrement())
+    post_id    Int?
+    body       String
+    created_at DateTime? @default(now()) @db.Timestamp(6)
+    user_id    Int?
+    posts      Posts?    @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Posts {
+    id         Int        @id @default(autoincrement())
+    title      String
+    body       String
+    created_at DateTime?  @default(now()) @db.Timestamp(6)
+    comments   Comments[]
+}
+
+model Ingredient {
+    id          Int    @id @default(autoincrement())
+    amount      Int
+    name        String
+    measureUnit String
+    dishId      Int
+    dish        Dishes @relation(fields: [dishId], references: [id])
+}
+
+model Recipe {
+    id     Int      @id @default(autoincrement())
+    step   String[]
+    dishId Int      @unique
+    dish   Dishes   @relation(fields: [dishId], references: [id])
 }
