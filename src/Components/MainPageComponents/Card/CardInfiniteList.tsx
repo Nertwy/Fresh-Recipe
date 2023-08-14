@@ -18,11 +18,10 @@ const CardInfiniteList: FC = () => {
   return (
     <>
       <CardList dishes={dishes} />
-      <div className="self-center bg-slate-100 text-center dark:bg-slate-700">
+      <div className="text-center self-center pb-6">
         <button
+          className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg"
           onClick={() => setCurrentLength(currentLength + 25)}
-          type="button"
-          className="mb-2 mr-2 rounded-lg bg-gradient-to-r from-green-200 via-green-400 to-green-500 px-5 py-2.5 text-center text-sm font-medium text-gray-900 shadow-lg shadow-green-500/50 hover:bg-gradient-to-br focus:outline-none focus:ring-4 focus:ring-green-300 dark:shadow-lg dark:shadow-green-800/80 dark:focus:ring-green-800"
         >
           Load More!
         </button>

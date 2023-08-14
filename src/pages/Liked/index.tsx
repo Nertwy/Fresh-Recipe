@@ -1,25 +1,18 @@
-import { type FC } from "react";
-import ChangeableInput from "~/Components/ChangeableInput";
+import { useState, type FC } from "react";
+import Search from "~/Components/Search";
 import { CardList } from "~/Components/MainPageComponents/Card/CardList";
-import StickyNav from "~/Components/StickyNav";
+import NavBar from "~/Components/NavBar";
 import { api } from "~/utils/api";
-const SearchForLikedDishes: FC = () => {
-  return (
-    <div className="">
-      <ChangeableInput className="flex w-full items-center rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none" />
-    </div>
-  );
-};
+import FilterBar from "~/Components/FilterBar";
 const LikedDishes: FC = () => {
   const { data, isFetched } = api.main.getLikedDishes.useQuery();
-  console.log(data);
-  
+  const [dishes, setDishes] = useState(data);
   if (isFetched)
     return (
       <>
-        <StickyNav></StickyNav>
-        <SearchForLikedDishes></SearchForLikedDishes>
-        <CardList dishes={data}/>
+        <NavBar></NavBar>
+        <FilterBar data={data} setData={setDishes} />
+        <CardList dishes={dishes} />
       </>
     );
   return <>Spinner</>;

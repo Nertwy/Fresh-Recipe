@@ -10,8 +10,14 @@ const config = {
     remotePatterns: [
       {
         protocol: "https",
-        pathname:"/StaticContent/Photos/**",
+        pathname: "/StaticContent/Photos/**",
         hostname: "s1.eda.ru",
+        port: "",
+      },
+      {
+        protocol: "https",
+        pathname: "/**",
+        hostname: "lh3.googleusercontent.com",
         port: "",
       },
     ],

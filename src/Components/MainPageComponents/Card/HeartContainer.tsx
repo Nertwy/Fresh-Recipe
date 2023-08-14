@@ -47,14 +47,19 @@ const HeartButton: FC<HeartButton> = ({
       <button className="bottom-0 right-3" onClick={handleLikeClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className={`h-auto w-6 fill-current ${
+          className={`h-6 w-6 fill-current ${
             isLiked ? "text-red-400" : "text-gray-400"
           }`}
-          viewBox="0 0 512 512"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
           <path
-            d="M0 190.9V185.1C0 115.2 50.52 55.58 119.4 44.1C164.1 36.51 211.4 51.37 244 84.02L256 96L267.1 84.02C300.6 51.37 347 36.51 392.6 44.1C461.5 55.58 512 115.2 512 185.1V190.9C512 232.4 494.8 272.1 464.4 300.4L283.7 469.1C276.2 476.1 266.3 480 256 480C245.7 480 235.8 476.1 228.3 469.1L47.59 300.4C17.23 272.1 .0003 232.4 .0003 190.9L0 190.9z"
-            style={{ outline: isLiked ? "none" : "1px solid gray" }} // add outline when not liked
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+            // style={{ outline: isLiked ? "none" : "1px solid gray" }}
           />
         </svg>
         {likes}

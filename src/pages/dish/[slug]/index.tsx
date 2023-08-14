@@ -1,22 +1,19 @@
-import { type Dishes } from "@prisma/client";
 import { useEffect, useState } from "react";
 import Card from "~/Components/MainPageComponents/Card/Card";
-import StickyNav from "~/Components/StickyNav";
 import { api } from "~/utils/api";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import {
-  type GetStaticProps,
   type InferGetStaticPropsType,
   type GetStaticPropsContext,
   type GetStaticPaths,
 } from "next";
-
+import NavBar from "~/Components/NavBar";
 const DishPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { slug } = props;
   const { data, isFetched } = api.main.getBySlug.useQuery(slug ?? "");
-  const [allFood, setallFood] = useState<Dishes | null>(data ?? null);
+  const [allFood, setallFood] = useState(data);
   //Сделать от 2х до 5 нормальные названия
   useEffect(() => {
     if (data) setallFood(data);
@@ -27,7 +24,7 @@ const DishPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   if (!allFood) return <>No data</>;
   return (
     <>
-      <StickyNav />
+      <NavBar />
       <div className="flex w-screen flex-col items-center bg-gray-200 ">
         <Card {...allFood} />
         <h3 className="text-xl font-semibold">Ингридиенты</h3>
@@ -42,12 +39,12 @@ const DishPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           ))}
         </div>
         <h1 className="text-2xl font-bold">Рецепт приготовления:</h1>
-        <div className="m-2  w-auto border-spacing-3 border-2 border-slate-800 p-2">
+        <div className="m-2  w-auto border-spacing-3 rounded-lg border-2 border-slate-800 p-2">
           <ol
             className="list-decimal space-y-3 pl-7 font-mono text-lg"
             type="1"
           >
-            {allFood.recipes.step.map((elem, index) => (
+            {allFood.recipes?.step.map((elem, index) => (
               <li key={index} className="list-decimal">
                 {elem}
               </li>
@@ -55,7 +52,6 @@ const DishPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           </ol>
         </div>
       </div>
-      {/* <Post postId={allFood.id!} /> */}
     </>
   );
 };
