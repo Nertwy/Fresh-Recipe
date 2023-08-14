@@ -1,9 +1,11 @@
+import { Dishes, Ingredient, Recipe } from "@prisma/client";
 import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+type FullDish = Dishes & { ingredients: Ingredient[]; recipes: Recipe };
 
 export const mainRouter = createTRPCRouter({
   getDish: publicProcedure.input(z.number()).query(async ({ ctx, input }) => {
@@ -31,10 +33,24 @@ export const mainRouter = createTRPCRouter({
         recipes: true,
       },
     });
-    return {
-      ...dish,
-    };
+
+    return dish;
   }),
+  getFullDish: publicProcedure
+    .input(z.number())
+    .query(async ({ ctx, input }) => {
+      const result = await ctx.prisma.dishes.findFirst({
+        where: {
+          id: input,
+        },
+        include: {
+          ingredients: true,
+          recipes: true,
+        },
+      });
+      if(!result) throw new Error(`Dish not found for ID ${input}`)
+      return result as FullDish;
+    }),
   getLikesOfDish: publicProcedure
     .input(z.number().int())
     .query(async ({ ctx, input }) => {
@@ -102,4 +118,17 @@ export const mainRouter = createTRPCRouter({
       },
     });
   }),
+  postDish: protectedProcedure.input(z()).mutation()
+  getSearched: publicProcedure
+    .input(z.string().nonempty())
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.dishes.findMany({
+        where: {
+          name: {
+            contains: input,
+            mode: "insensitive",
+          },
+        },
+      });
+    }),
 });
