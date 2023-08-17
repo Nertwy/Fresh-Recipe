@@ -48,7 +48,7 @@ export const mainRouter = createTRPCRouter({
           recipes: true,
         },
       });
-      if(!result) throw new Error(`Dish not found for ID ${input}`)
+      if (!result) throw new Error(`Dish not found for ID ${input}`);
       return result as FullDish;
     }),
   getLikesOfDish: publicProcedure
@@ -118,7 +118,11 @@ export const mainRouter = createTRPCRouter({
       },
     });
   }),
-  postDish: protectedProcedure.input(z()).mutation()
+  postDish: protectedProcedure
+    .input(z.object({}))
+    .mutation(({ ctx, input }) => {
+      return;
+    }),
   getSearched: publicProcedure
     .input(z.string().nonempty())
     .query(async ({ ctx, input }) => {

@@ -47,7 +47,7 @@ const NavBar = () => {
             <li>
               <Link href={"/Liked"} className="">
                 Liked Dishes
-                <span className="indicator-item  indicator-end indicator-middle">
+                <span className="indicator-end  indicator-item indicator-middle">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
@@ -80,6 +80,16 @@ const NavBar = () => {
                 >
                   Login
                 </Link>
+              )}
+            </li>
+            <li>
+              {login ? (
+                <Link href={"/AddDish"}>
+                  Add Dish
+                  <span className="indicator-end  indicator-item indicator-middle">+</span>
+                </Link>
+              ) : (
+                <></>
               )}
             </li>
           </ul>

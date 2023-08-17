@@ -1,4 +1,4 @@
-import { useState, type FC, ChangeEvent } from "react";
+import { useState, type FC, type ChangeEvent } from "react";
 import {
   type SearchType,
   getObjectKeyValueTypes,
@@ -7,16 +7,10 @@ import {
   mergeProperties,
   useModalScrollLock,
 } from "~/functions";
-import {
-  type User,
-  type Dishes,
-  type Ingredient,
-  type Recipe,
-} from "@prisma/client";
+import { type User } from "@prisma/client";
 import { api } from "~/utils/api";
-type FullDish =
-  | (Dishes & { ingredients: Ingredient[]; recipes: Recipe })
-  | null;
+import { type FullDish } from "~/types";
+
 type MenuPossibleTypes = FullDish | User;
 type FilterMenuProps = {
   object?: MenuPossibleTypes;
@@ -42,7 +36,7 @@ const FilterMenu: FC<FilterMenuProps> = ({ object }) => {
       {Array.from(RightMap).map((val, index) => (
         <div
           tabIndex={0}
-          className="collapse-arrow collapse border border-base-300 bg-base-200"
+          className="collapse collapse-arrow border border-base-300 bg-base-200"
           key={index}
         >
           <input type="checkbox" className="peer" />
