@@ -1,4 +1,4 @@
-import { Dishes, Ingredient, Recipe } from "@prisma/client";
+import { type Dishes, type Ingredient, type Recipe } from "@prisma/client";
 import { z } from "zod";
 import {
   createTRPCRouter,
@@ -6,6 +6,29 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 type FullDish = Dishes & { ingredients: Ingredient[]; recipes: Recipe };
+
+const IngredientClientSchema = z.object({
+  amount: z.number(),
+  name: z.string(),
+  measureUnit: z.string(),
+});
+const StepSchema = z.array(z.string());
+// Define schema for RecipeClient
+const RecipeClientSchema = z.object({
+  step: StepSchema,
+});
+
+// Define schema for FullDishClient
+const FullDishClientSchema = z
+  .object({
+    name: z.string(),
+    cuisine: z.string(),
+    slug: z.string(),
+    url: z.string(),
+    ingredients: z.array(IngredientClientSchema),
+    recipes: RecipeClientSchema,
+  })
+  .nullish();
 
 export const mainRouter = createTRPCRouter({
   getDish: publicProcedure.input(z.number()).query(async ({ ctx, input }) => {
@@ -119,9 +142,32 @@ export const mainRouter = createTRPCRouter({
     });
   }),
   postDish: protectedProcedure
-    .input(z.object({}))
-    .mutation(({ ctx, input }) => {
-      return;
+    .input(FullDishClientSchema)
+    .mutation(async ({ ctx, input }) => {
+      if (!input) return "Parsed null value!";
+      const { cuisine, ingredients, name, recipes, slug, url } = input;
+      return await ctx.prisma.dishes.create({
+        data: {
+          name,
+          cuisine,
+          slug,
+          url,
+          recipes: {
+            create: {
+              ...recipes,
+            },
+          },
+          ingredients: {
+            create: ingredients,
+          },
+          likes: 0,
+        },
+        include: {
+          ingredients: true,
+          recipes: true,
+          DishLikes: true,
+        },
+      });
     }),
   getSearched: publicProcedure
     .input(z.string().nonempty())

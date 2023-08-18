@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { type FC, useEffect, useState } from "react";
 type Cuisine = {
   name: string;
   nationality: string;
@@ -49,7 +49,11 @@ const cuisines: Cuisine[] = [
   { name: "German cuisine", nationality: "Germany" },
   { name: "Ghanaian cuisine", nationality: "Ghana" },
 ];
-export default function CuisineSearch() {
+type CuisineSearchProps = {
+  setCuisine?: (name: string) => void;
+};
+
+const CuisineSearch: FC<CuisineSearchProps> = ({ setCuisine }) => {
   const [cuisineStore, setCuisineStore] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCuisine, setSelectedCuisine] = useState<Cuisine | null>(null);
@@ -75,6 +79,9 @@ export default function CuisineSearch() {
   const filteredCuisines = cuisines.filter((cuisine: Cuisine) =>
     cuisine.name.toLowerCase().includes(cuisineStore.toLowerCase())
   );
+  useEffect(() => {
+    setCuisine?.(selectedCuisine?.name ?? "Default");
+  }, [selectedCuisine]);
   return (
     <div className="">
       <input
@@ -103,4 +110,6 @@ export default function CuisineSearch() {
       )}
     </div>
   );
-}
+};
+
+export default CuisineSearch;

@@ -1,5 +1,9 @@
 import { type FC, useState, useEffect } from "react";
-import { type RecipeClient, type IngredientClient, type Measurement } from "~/types";
+import {
+  type RecipeClient,
+  type IngredientClient,
+  type Measurement,
+} from "~/types";
 
 const measurements = [
   "tsp",
@@ -70,6 +74,11 @@ const DynamicInput: FC<DynamicInputProps> = ({
       setData(newInputs);
     } else {
       const newInputs = [...data];
+      newInputs[index] = {
+        amount: 0,
+        measureUnit: "",
+        name: value,
+      };
       if (value && index === newInputs.length - 1) {
         // add new input if current input is filled and is the last input
         newInputs.push({ amount: 0, measureUnit: "", name: "" });
@@ -82,7 +91,6 @@ const DynamicInput: FC<DynamicInputProps> = ({
         newInputs.splice(index, 1);
       }
       setData(newInputs);
-      handlePropertyChange(index, "name", value);
     }
   };
 
@@ -104,7 +112,6 @@ const DynamicInput: FC<DynamicInputProps> = ({
     propertyName: keyof IngredientClient, // assuming IngredientClient is the type
     value: number | Measurement
   ) => {
-    console.log(data);
     if (!GuardCheck(data)) return;
 
     const newState = data.map((item, i) => {
@@ -114,11 +121,17 @@ const DynamicInput: FC<DynamicInputProps> = ({
           [propertyName]: value,
         };
       } else {
-        return item;
+        return { ...item };
       }
     });
 
     setData(newState);
+    // return newState;
+  };
+  const itemGuardCheck = (
+    item: string | IngredientClient
+  ): item is IngredientClient => {
+    return typeof item === "object";
   };
   useEffect(() => {
     if (!handleData) return;
@@ -151,6 +164,7 @@ const DynamicInput: FC<DynamicInputProps> = ({
                   inputMode="numeric"
                   pattern="\d*"
                   placeholder="amount"
+                  value={GuardCheck(data) ? data[index]?.amount : undefined}
                   onChange={(e) =>
                     handlePropertyChange(
                       index,
@@ -160,7 +174,7 @@ const DynamicInput: FC<DynamicInputProps> = ({
                   }
                 />
                 <select
-                  className="join-item select select-bordered"
+                  className="select join-item select-bordered"
                   onChange={(e) =>
                     handlePropertyChange(
                       index,
