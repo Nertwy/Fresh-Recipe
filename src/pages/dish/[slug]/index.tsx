@@ -10,6 +10,8 @@ import {
   type GetStaticPaths,
 } from "next";
 import NavBar from "~/Components/NavBar";
+import CommentsSection from "~/Components/Comments";
+import { type Thread } from "~/types";
 const DishPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { slug } = props;
   const { data, isFetched } = api.main.getBySlug.useQuery(slug ?? "");
@@ -19,8 +21,11 @@ const DishPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     if (data) setallFood(data);
   }, [isFetched]);
 
-  console.log(allFood);
-
+  const { data: comments, isFetched: fetched } =
+    api.main.getComments.useQuery(6);
+  useEffect(() => {
+    // console.log(comments);
+  }, [isFetched]);
   if (!allFood) return <>No data</>;
   return (
     <>
@@ -52,10 +57,134 @@ const DishPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           </ol>
         </div>
       </div>
+      <div className="container mx-auto p-4">
+      <CommentsSection comments={comments ?? []} />
+      </div>
     </>
   );
 };
-
+// const comments2: Thread[] = [
+//   {
+//     id: 10,
+//     post_id: 6,
+//     body: "zxc",
+//     created_at: new Date("2023-09-03 21:03:24.989254"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//     parent_id: null,
+//   },
+//   {
+//     id: 12,
+//     post_id: 6,
+//     body: "yrte",
+//     created_at: new Date("2023-09-03 21:05:56.901422"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//     parent_id: 10,
+//   },
+//   {
+//     id: 15,
+//     post_id: 6,
+//     body: "This is comment 1 with a parent.",
+//     created_at: new Date("2023-09-03 21:10:00"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//     parent_id: 10,
+//   },
+//   {
+//     id: 16,
+//     post_id: 6,
+//     body: "This is comment 2 with a parent.",
+//     created_at: new Date("2023-09-03 21:11:00"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     parent_id: 12,
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//   },
+//   {
+//     id: 17,
+//     post_id: 6,
+//     body: "This is comment 3 with a parent.",
+//     created_at: new Date("2023-09-03 21:12:00"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//     parent_id: 10,
+//   },
+//   {
+//     id: 18,
+//     post_id: 6,
+//     body: "This is comment 4 with a parent.",
+//     created_at: new Date("2023-09-03 21:13:00"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     parent_id: 12,
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//   },
+//   {
+//     id: 19,
+//     post_id: 6,
+//     body: "This is comment 5 with a parent.",
+//     created_at: new Date("2023-09-03 21:14:00"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//     parent_id: 10,
+//   },
+//   {
+//     id: 20,
+//     post_id: 6,
+//     body: "This is comment 6 with a parent.",
+//     created_at: new Date("2023-09-03 21:15:00"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     parent_id: 12,
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//   },
+//   {
+//     id: 21,
+//     post_id: 6,
+//     body: "This is comment 7 with a parent.",
+//     created_at: new Date("2023-09-03 21:16:00"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//     parent_id: 10,
+//   },
+//   {
+//     id: 22,
+//     post_id: 6,
+//     body: "This is comment 8 with a parent.",
+//     created_at: new Date("2023-09-03 21:17:00"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     parent_id: 12,
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//   },
+//   {
+//     id: 23,
+//     post_id: 6,
+//     body: "This is comment 9 with a parent.",
+//     created_at: new Date("2023-09-03 21:18:00"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//     parent_id: 10,
+//   },
+//   {
+//     id: 24,
+//     post_id: 6,
+//     body: "This is comment 10 with a parent.",
+//     created_at: new Date("2023-09-03 21:19:00"),
+//     user_id: "cll2wgdjz0000uz2c9kxea20o",
+//     parent_id: 12,
+//     image:
+//       "https://lh3.googleusercontent.com/a/AAcHTtdEobpd_GiP-ijvBMgdfG1tce3QAPXEttoBG8NsQTgT6g=s96-c",
+//   },
+// ];
 export const getStaticPaths: GetStaticPaths = async () => {
   const slugs = await prisma.dishes.findMany({
     select: {

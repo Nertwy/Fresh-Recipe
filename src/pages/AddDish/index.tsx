@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import CuisineSearch from "~/Components/AutoCompleteCuisine";
 import DynamicInput from "~/Components/DynamicInput";
 import "@uploadthing/react/styles.css";
@@ -9,9 +9,13 @@ import {
 } from "~/types";
 import { UploadButton } from "~/utils/uploadthing";
 import { api } from "~/utils/api";
+import slugify from "slugify";
+import Preview from "./Preview";
+import NavBar from "~/Components/NavBar";
 
 const AddDish = () => {
   const [dish, setDish] = useState<Partial<FullDishClient>>(null);
+  const [preview, setPreview] = useState(false);
   const postHook = api.main.postDish.useMutation();
   const setCuisine = (name: string) => {
     setDish({ ...dish, cuisine: name });
@@ -37,7 +41,11 @@ const AddDish = () => {
       ingredients: dish?.ingredients ?? [
         { amount: 0, measureUnit: "", name: "" },
       ],
-      slug: dish?.slug ?? "",
+      slug: slugify(`${dish?.name}`, {
+        replacement: "-",
+        trim: true,
+        remove: undefined,
+      }),
     };
     payload.recipes.step.pop();
     payload.ingredients.pop();
@@ -49,44 +57,58 @@ const AddDish = () => {
     console.log(dish);
   }, [dish]);
   return (
-    <form
-      className="form-control items-center"
-      onSubmit={(e) => handleSubmit(e)}
-    >
-      <input
-        name="name"
-        type="text"
-        placeholder="Dish name"
-        className="input input-bordered input-secondary w-full max-w-xs"
-        onChange={(e) => void setDish({ ...dish, name: e.currentTarget.value })}
-      />
-      <CuisineSearch setCuisine={setCuisine} />
-      <UploadButton
-        endpoint="imageUploader"
-        onClientUploadComplete={(res) => {
-          // Do something with the response
-          res?.forEach((upload) => setDish({ ...dish, url: upload.url }));
-          alert("Upload Completed");
-        }}
-        onUploadError={(error: Error) => {
-          // Do something with the error.
-          alert(`ERROR! ${error.message}`);
-        }}
-      />
-      <DynamicInput
-        label="Ingredients"
-        ingredients={true}
-        handleData={handleIngAndRecipe}
-      />
-      <DynamicInput
-        label="Recipe"
-        ingredients={false}
-        handleData={handleIngAndRecipe}
-      />
-      <button className="btn btn-primary btn-lg" type="submit">
-        Create Recipe!
-      </button>
-    </form>
+    <>
+      <NavBar />
+      <form
+        className="form-control h-screen items-center space-y-2 bg-base-100"
+        onSubmit={(e) => handleSubmit(e)}
+      >
+        <h1 className="text-3xl">Create your Dish!</h1>
+        <input
+          name="name"
+          type="text"
+          placeholder="Dish name"
+          className="input input-bordered input-secondary w-full max-w-xs"
+          onChange={(e) =>
+            void setDish({ ...dish, name: e.currentTarget.value })
+          }
+        />
+        <CuisineSearch setCuisine={setCuisine} />
+        <UploadButton
+          endpoint="imageUploader"
+          onClientUploadComplete={(res) => {
+            // Do something with the response
+            res?.forEach((upload) => setDish({ ...dish, url: upload.url }));
+            alert("Upload Completed");
+          }}
+          onUploadError={(error: Error) => {
+            // Do something with the error.
+            alert(`ERROR! ${error.message}`);
+          }}
+        />
+        <DynamicInput
+          label="Ingredients"
+          ingredients={true}
+          handleData={handleIngAndRecipe}
+        />
+        <DynamicInput
+          label="Recipe"
+          ingredients={false}
+          handleData={handleIngAndRecipe}
+        />
+        <button className="btn btn-secondary btn-lg" type="submit">
+          Create Recipe!
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => setPreview(!preview)}
+          type="button"
+        >
+          {preview ? "Close Preview" : "Preview"}
+        </button>
+        <Preview dish={dish as FullDishClient} visible={preview} />
+      </form>
+    </>
   );
 };
 

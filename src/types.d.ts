@@ -1,4 +1,10 @@
-import { type Dishes, type Ingredient, type Recipe } from "@prisma/client";
+import {
+  Comments,
+  User,
+  type Dishes,
+  type Ingredient,
+  type Recipe,
+} from "@prisma/client";
 type FullDish =
   | (Dishes & { ingredients: Ingredient[]; recipes: Recipe })
   | null;
@@ -42,3 +48,8 @@ type FullDishClient =
       recipes: RecipeClient;
     })
   | null;
+type Thread = (Comments & { image: string | null }) | null;
+type ThreadTreeData = {
+  comment: Thread;
+  children: ThreadTreeData[];
+};

@@ -5,6 +5,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { Thread } from "~/types";
 type FullDish = Dishes & { ingredients: Ingredient[]; recipes: Recipe };
 
 const IngredientClientSchema = z.object({
@@ -146,7 +147,7 @@ export const mainRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       if (!input) return "Parsed null value!";
       const { cuisine, ingredients, name, recipes, slug, url } = input;
-      return await ctx.prisma.dishes.create({
+      const result = await ctx.prisma.dishes.create({
         data: {
           name,
           cuisine,
@@ -154,7 +155,7 @@ export const mainRouter = createTRPCRouter({
           url,
           recipes: {
             create: {
-              ...recipes,
+              step: recipes.step.map((item) => item),
             },
           },
           ingredients: {
@@ -168,6 +169,9 @@ export const mainRouter = createTRPCRouter({
           DishLikes: true,
         },
       });
+      console.log(result);
+
+      return result;
     }),
   getSearched: publicProcedure
     .input(z.string().nonempty())
@@ -180,5 +184,29 @@ export const mainRouter = createTRPCRouter({
           },
         },
       });
+    }),
+
+  //CHANGE POST_id = 6 to a variable !!!!
+  getComments: publicProcedure
+    .input(z.number().positive())
+    .query(async ({ ctx, input }) => {
+      const post_id = input;
+      const result = await ctx.prisma
+        .$queryRaw<Thread[]>`WITH RECURSIVE comment_tree AS (
+        SELECT c.id, c.post_id, c.body, c.parent_id, c.user_id, c.created_at, u.image
+        FROM "Comments" c
+        LEFT JOIN "User" u ON c.user_id = u.id
+        WHERE c.post_id = ${post_id} AND c.parent_id IS NULL -- Start with top-level comments (parent_id is NULL)
+
+        UNION ALL
+
+        SELECT c.id, c.post_id, c.body, c.parent_id, c.user_id, c.created_at, u.image
+        FROM "Comments" c
+        INNER JOIN comment_tree ct ON ct.id = c.parent_id -- Join child comments to their parents
+        LEFT JOIN "User" u ON c.user_id = u.id
+      )
+      SELECT * FROM comment_tree ORDER BY id;
+      `;
+      return result;
     }),
 });

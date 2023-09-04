@@ -53,6 +53,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     DishLikes     DishLikes[]
+    Comments      Comments[]
 }
 
 model VerificationToken {
@@ -85,12 +86,16 @@ model Dishes {
 }
 
 model Comments {
-    id         Int       @id @default(autoincrement())
+    id         Int        @id @default(autoincrement())
     post_id    Int?
     body       String
-    created_at DateTime? @default(now()) @db.Timestamp(6)
-    user_id    Int?
-    posts      Posts?    @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    created_at DateTime?  @default(now()) @db.Timestamp(6)
+    user_id    String
+    user       User       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    posts      Posts?     @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    parent_id  Int? // New field to represent the parent comment's ID
+    parent     Comments?  @relation("Replies", fields: [parent_id], references: [id])
+    replies    Comments[] @relation("Replies") // Opposite relation field for replies
 }
 
 model Posts {

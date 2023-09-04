@@ -23,6 +23,12 @@ const config = {
         hostname: "lh3.googleusercontent.com",
         port: "",
       },
+      {
+        protocol: "https",
+        pathname: "/**",
+        hostname: "uploadthing.com",
+        port: "",
+      },
     ],
   },
   reactStrictMode: true,

@@ -140,7 +140,7 @@ const DynamicInput: FC<DynamicInputProps> = ({
   }, [data]);
 
   return (
-    <div className="">
+    <div className="flex flex-col">
       {data.map((value, index) => {
         return (
           <div className="join" key={index}>
