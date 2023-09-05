@@ -1,12 +1,12 @@
 import {
-  Comments,
-  User,
+  type Posts,
+  type Comments,
   type Dishes,
   type Ingredient,
   type Recipe,
 } from "@prisma/client";
 type FullDish =
-  | (Dishes & { ingredients: Ingredient[]; recipes: Recipe })
+  | (Dishes & { ingredients: Ingredient[]; recipes: Recipe; post: Posts })
   | null;
 
 type LooseAutoComplete<T extends string> = T | Omit<string, T>;
@@ -48,8 +48,9 @@ type FullDishClient =
       recipes: RecipeClient;
     })
   | null;
-type Thread = (Comments & { image: string | null }) | null;
+type Thread = (Comments & { image: string }) | null;
 type ThreadTreeData = {
   comment: Thread;
   children: ThreadTreeData[];
 };
+type ClientThread = Omit<Comments, "id">;

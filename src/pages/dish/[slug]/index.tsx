@@ -11,22 +11,24 @@ import {
 } from "next";
 import NavBar from "~/Components/NavBar";
 import CommentsSection from "~/Components/Comments";
-import { type Thread } from "~/types";
+import { FullDish, type Thread } from "~/types";
 const DishPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { slug } = props;
-  const { data, isFetched } = api.main.getBySlug.useQuery(slug ?? "");
+  const { data, isFetched} = api.main.getBySlug.useQuery(slug ?? "");
   const [allFood, setallFood] = useState(data);
   //Сделать от 2х до 5 нормальные названия
   useEffect(() => {
     if (data) setallFood(data);
   }, [isFetched]);
 
-  const { data: comments, isFetched: fetched } =
-    api.main.getComments.useQuery(6);
+  const { data: comments, isLoading, refetch} = api.main.getComments.useQuery(
+    data?.id ?? -1
+  );
   useEffect(() => {
     // console.log(comments);
-  }, [isFetched]);
+  }, [isLoading]);
   if (!allFood) return <>No data</>;
+
   return (
     <>
       <NavBar />
@@ -58,7 +60,15 @@ const DishPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         </div>
       </div>
       <div className="container mx-auto p-4">
-      <CommentsSection comments={comments ?? []} />
+        {/* {isLoading ? (
+          <span className="loading loading-spinner loading-lg"></span>
+        ) : ( */}
+        <CommentsSection
+          comments={comments ?? []}
+          post_id={allFood.post.id}
+          refetch={() => void refetch()}
+        />
+        {/* )} */}
       </div>
     </>
   );

@@ -83,6 +83,7 @@ model Dishes {
     recipes     Recipe?
     likes       Int          @default(0)
     DishLikes   DishLikes[]
+    post        Posts?
 }
 
 model Comments {
@@ -100,10 +101,9 @@ model Comments {
 
 model Posts {
     id         Int        @id @default(autoincrement())
-    title      String
-    body       String
-    created_at DateTime?  @default(now()) @db.Timestamp(6)
     comments   Comments[]
+    dish       Dishes     @relation(fields: [dish_id], references: [id])
+    dish_id    Int        @unique
 }
 
 model Ingredient {

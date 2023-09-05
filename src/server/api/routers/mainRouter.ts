@@ -5,8 +5,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { Thread } from "~/types";
-type FullDish = Dishes & { ingredients: Ingredient[]; recipes: Recipe };
+import { Thread, FullDish } from "~/types";
 
 const IngredientClientSchema = z.object({
   amount: z.number(),
@@ -30,6 +29,14 @@ const FullDishClientSchema = z
     recipes: RecipeClientSchema,
   })
   .nullish();
+
+const ClientThreadSchema = z.object({
+  user_id: z.string().cuid(),
+  created_at: z.date(),
+  post_id: z.number(),
+  body: z.string(),
+  parent_id: z.number().nullable(),
+});
 
 export const mainRouter = createTRPCRouter({
   getDish: publicProcedure.input(z.number()).query(async ({ ctx, input }) => {
@@ -55,10 +62,11 @@ export const mainRouter = createTRPCRouter({
       include: {
         ingredients: true,
         recipes: true,
+        post: true,
       },
     });
 
-    return dish;
+    return dish as FullDish;
   }),
   getFullDish: publicProcedure
     .input(z.number())
@@ -191,8 +199,9 @@ export const mainRouter = createTRPCRouter({
     .input(z.number().positive())
     .query(async ({ ctx, input }) => {
       const post_id = input;
-      const result = await ctx.prisma
-        .$queryRaw<Thread[]>`WITH RECURSIVE comment_tree AS (
+      const result = await ctx.prisma.$queryRaw<
+        Thread[]
+      >`WITH RECURSIVE comment_tree AS (
         SELECT c.id, c.post_id, c.body, c.parent_id, c.user_id, c.created_at, u.image
         FROM "Comments" c
         LEFT JOIN "User" u ON c.user_id = u.id
@@ -208,5 +217,14 @@ export const mainRouter = createTRPCRouter({
       SELECT * FROM comment_tree ORDER BY id;
       `;
       return result;
+    }),
+  postComment: protectedProcedure
+    .input(ClientThreadSchema)
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.comments.create({
+        data: {
+          ...input,
+        },
+      });
     }),
 });
