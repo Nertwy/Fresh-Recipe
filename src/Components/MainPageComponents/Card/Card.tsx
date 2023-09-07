@@ -18,8 +18,9 @@ const Card: FC<Dishes | null> = (data) => {
   if (!data) {
     return <></>;
   }
+
   return (
-    <div className="animate-fadeIn card my-4 w-96 bg-base-100 shadow-xl transition duration-300 hover:scale-105 hover:cursor-pointer">
+    <div className="animate-fadeIn hover:cursor-point card my-4 w-96 bg-base-100 shadow-xl transition duration-300 hover:scale-105">
       <figure className="relative h-72 md:w-full">
         <Image
           className="object-fill"

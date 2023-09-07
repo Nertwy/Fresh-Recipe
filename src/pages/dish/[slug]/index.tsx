@@ -14,16 +14,18 @@ import CommentsSection from "~/Components/Comments";
 import { FullDish, type Thread } from "~/types";
 const DishPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { slug } = props;
-  const { data, isFetched} = api.main.getBySlug.useQuery(slug ?? "");
+  const { data, isFetched } = api.main.getBySlug.useQuery(slug ?? "");
   const [allFood, setallFood] = useState(data);
   //Сделать от 2х до 5 нормальные названия
   useEffect(() => {
     if (data) setallFood(data);
   }, [isFetched]);
 
-  const { data: comments, isLoading, refetch} = api.main.getComments.useQuery(
-    data?.id ?? -1
-  );
+  const {
+    data: comments,
+    isLoading,
+    refetch,
+  } = api.main.getComments.useQuery(data?.id ?? -1);
   useEffect(() => {
     // console.log(comments);
   }, [isLoading]);
@@ -32,7 +34,7 @@ const DishPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
       <NavBar />
-      <div className="flex w-screen flex-col items-center bg-gray-200 ">
+      <div className="flex w-screen flex-col items-center bg-base-300 ">
         <Card {...allFood} />
         <h3 className="text-xl font-semibold">Ингридиенты</h3>
         <div className="text mb-3 flex-col pb-6 font-serif sm:w-3/5 md:w-2/4 lg:w-1/3">
@@ -222,14 +224,15 @@ export const getStaticProps = async (
     },
     router: appRouter,
   });
-  await helpers.main.getBySlug.prefetch(slug ?? "");
+  const data = await helpers.main.getBySlug.fetch(slug ?? "");
 
   return {
     props: {
       trpcState: helpers.dehydrate(),
-      slug,
+      slug: data?.slug,
     },
     revalidate: 1,
   };
 };
 export default DishPage;
+

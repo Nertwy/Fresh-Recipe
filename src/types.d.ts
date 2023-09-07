@@ -54,3 +54,4 @@ type ThreadTreeData = {
   children: ThreadTreeData[];
 };
 type ClientThread = Omit<Comments, "id">;
+type Theme = "light" | "dark";

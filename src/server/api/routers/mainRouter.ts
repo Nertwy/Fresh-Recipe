@@ -124,9 +124,7 @@ export const mainRouter = createTRPCRouter({
       }
     }),
   getIsLiked: protectedProcedure
-    .input(
-      z.object({ user_id: z.string().cuid(), dish_id: z.number().positive() })
-    )
+    .input(z.object({ user_id: z.string().cuid(), dish_id: z.number() }))
     .query(async ({ ctx, input }) => {
       const result = await ctx.prisma.dishLikes.findFirst({
         where: {
