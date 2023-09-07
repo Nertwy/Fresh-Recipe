@@ -153,7 +153,9 @@ const CommentsSection: FC<CommentsSectionProps> = ({ comments, post_id,refetch }
                 <button
                   className="btn"
                   type="submit"
-                  onClick={(e) => submitComment(e)}
+                  onClick={(e) => {
+                    setIsTextAreaOpen(null)
+                    submitComment(e)}}
                 >
                   Submit!
                 </button>
