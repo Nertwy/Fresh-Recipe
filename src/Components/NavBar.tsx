@@ -8,7 +8,7 @@ const NavBar = () => {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem("theme") as Theme;
-      return savedTheme || "light"; // Default to "light" if no theme is found in localStorage
+      return savedTheme || "light";
     }
     return "light";
   });
