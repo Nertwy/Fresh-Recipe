@@ -10,11 +10,12 @@ const config = {
     esmExternals: false,
   },
   images: {
+    domains:['s1.eda.ru'],
     remotePatterns: [
       {
         protocol: "https",
         pathname: "/StaticContent/Photos/**",
-        hostname: "s1.eda.ru",
+        hostname: "**.s1.eda.ru",
         port: "",
       },
       {
@@ -30,6 +31,7 @@ const config = {
         port: "",
       },
     ],
+    formats:['image/webp']
   },
   reactStrictMode: true,
 
