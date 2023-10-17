@@ -14,7 +14,7 @@ const config = {
       {
         protocol: "https",
         pathname: "/StaticContent/Photos/**",
-        hostname: "example.com",
+        hostname: "s1.eda.ru",
         port: "",
       },
       {
